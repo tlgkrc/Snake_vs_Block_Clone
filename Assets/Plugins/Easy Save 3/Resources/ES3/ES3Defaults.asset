@@ -32,13 +32,9 @@ MonoBehaviour:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
     - Sirenix.OdinInspector.CompatibilityLayer
-    - ToonyColorsPro2.Demo
-    - ToonyColorsPro.Runtime
     - PPv2URPConverters
     - Sirenix.OdinInspector.CompatibilityLayer.Editor
     - Sirenix.OdinInspector.Modules.UnityMathematics
-    - ToonyColorsPro.Editor
-    - ToonyColorsPro.Demo.Editor
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1
