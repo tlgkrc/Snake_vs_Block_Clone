@@ -72,7 +72,7 @@ namespace Managers
             InputSignals.Instance.onDisableInput -= OnDisableInput;
             CoreGameSignals.Instance.onPlay -= OnPlay;
             CoreGameSignals.Instance.onReset -= OnReset;
-            LevelSignals.Instance.onNextLevel += OnNextLevel;
+            LevelSignals.Instance.onNextLevel -= OnNextLevel;
         }
 
         private void OnDisable()

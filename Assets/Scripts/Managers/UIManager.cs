@@ -13,11 +13,6 @@ namespace Managers
 
         #region Serialized Variables
         [SerializeField] private List<GameObject> panels;
-        [SerializeField] private TextMeshProUGUI levelText;
-        [SerializeField] private TextMeshPro scoreTMP;
-        [SerializeField] private bool isOnEditMode = false;
-        [SerializeField] private TextMeshProUGUI idleScoreText;
-
         #endregion
 
         #region Private Variables
@@ -42,7 +37,6 @@ namespace Managers
         private void SubscribeEvents()
         {
             CoreGameSignals.Instance.onPlay += OnPlay;
-            CoreGameSignals.Instance.onChangeGameState += OnChangeGameState;
             UISignals.Instance.onOpenPanel += OnOpenPanel;
             UISignals.Instance.onClosePanel += OnClosePanel;
             UISignals.Instance.onSetLevelText += OnSetLevelText;
@@ -55,7 +49,6 @@ namespace Managers
         private void UnsubscribeEvents()
         {
             CoreGameSignals.Instance.onPlay -= OnPlay;
-            CoreGameSignals.Instance.onChangeGameState -= OnChangeGameState;
             UISignals.Instance.onOpenPanel -= OnOpenPanel;
             UISignals.Instance.onClosePanel -= OnClosePanel;
             UISignals.Instance.onSetLevelText -= OnSetLevelText;
@@ -87,8 +80,7 @@ namespace Managers
         
         private void OnSetScoreText(int value)
         {
-            scoreTMP.text = (value.ToString());
-            idleScoreText.text = (value.ToString());
+           
         }
         
         private void OnPlay()
@@ -106,18 +98,11 @@ namespace Managers
         private void OnLevelSuccessful()
         {
             UISignals.Instance.onClosePanel?.Invoke(UIPanels.LevelPanel);
-            UISignals.Instance.onOpenPanel?.Invoke(UIPanels.WinPanel);
         }
-
-        private void OnChangeGameState()
-        {
-            UISignals.Instance.onClosePanel?.Invoke(UIPanels.WinPanel);
-            UISignals.Instance.onOpenPanel?.Invoke(UIPanels.IdlePanel);
-        }
+        
 
         private void OnSetLevelText(int value)
         {
-            levelText.text = "Level " + (value + 1);
         }
         private void OnLastCollectableAddedToPlayer(bool isReady)
         {
@@ -140,30 +125,7 @@ namespace Managers
             UISignals.Instance.onOpenPanel?.Invoke(UIPanels.StartPanel);
         }
         
-        public void NextLevel()
-        {
-            LevelSignals.Instance.onNextLevel?.Invoke();
-            UISignals.Instance.onClosePanel?.Invoke(UIPanels.IdlePanel);
-            UISignals.Instance.onOpenPanel?.Invoke(UIPanels.LevelPanel);
-            UISignals.Instance.onOpenPanel?.Invoke(UIPanels.StartPanel);
-        }
-
-        public void Claim()
-        {
-            if (_isReadyForIdleGame || isOnEditMode)
-            {
-                CoreGameSignals.Instance.onChangeGameState?.Invoke();
-                ScoreSignals.Instance.onSendFinalScore?.Invoke();
-            }
-        }
-
-        public void NoThanks()
-        {
-            if (_isReadyForIdleGame || isOnEditMode)
-            {
-                CoreGameSignals.Instance.onChangeGameState?.Invoke();
-            }
-        }
+        
         
         #endregion
     }

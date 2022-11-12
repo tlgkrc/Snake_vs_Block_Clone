@@ -18,6 +18,8 @@ namespace Signals
         public UnityAction<float> onSetPlayerScale = delegate {  };
         public UnityAction<bool> onLastCollectableAddedToPlayer = delegate {  };
         public Func<int> onGetCurrentScore = delegate { return 1; };
+        //
+        public UnityAction<int> onInteractionWithPlayer = delegate {  };
 
     }
 }

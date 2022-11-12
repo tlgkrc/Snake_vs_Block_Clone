@@ -7,9 +7,6 @@ namespace Enums
     {
         StartPanel,
         LevelPanel,
-        WinPanel,
         FailPanel,
-        IdlePanel
-        
     }
 }

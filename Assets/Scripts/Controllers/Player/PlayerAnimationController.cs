@@ -1,4 +1,5 @@
-﻿using Enums;
+﻿using Controllers.Player;
+using Enums;
 using Keys;
 using Managers;
 using UnityEngine;

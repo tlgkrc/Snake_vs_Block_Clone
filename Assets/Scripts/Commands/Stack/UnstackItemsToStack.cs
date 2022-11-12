@@ -32,7 +32,7 @@ namespace Commands
             }
             
             _unStackList.Clear();
-            _dublicateStateItemsCommand.Execute();
+            //_dublicateStateItemsCommand.Execute();
             ScoreSignals.Instance.onSetScore?.Invoke(_collectableStack.Count);
             ScoreSignals.Instance.onSetLeadPosition?.Invoke(_collectableStack[0]);
 

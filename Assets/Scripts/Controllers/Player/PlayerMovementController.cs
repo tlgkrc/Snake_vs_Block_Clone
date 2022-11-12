@@ -104,10 +104,6 @@ namespace Controllers
             {
                 RunnerMove();
             }
-            else
-            {
-                IdleMove();
-            }
         }
 
         private void StopPlayer()
@@ -133,27 +129,6 @@ namespace Controllers
             position = new Vector3(Mathf.Clamp(rigidbody.position.x, _clampValues.x,
                     _clampValues.y), (position = rigidbody.position).y, position.z);
             rigidbody.position = position;
-            
-        }
-
-        private void IdleMove()
-        {
-            var velocity = rigidbody.velocity;
-            velocity = new Vector3(_inputValueX * _movementData.ForwardSpeed, velocity.y,
-                _inputValueZ*_movementData.ForwardSpeed);
-            rigidbody.velocity = velocity;
-
-            var position1 = rigidbody.position;
-            var position = new Vector3(position1.x, position1.y, position1.z);
-            position1 = position;
-            rigidbody.position = position1;
-            
-            if (velocity != Vector3.zero)
-            {
-                Quaternion toRotation = Quaternion.LookRotation(velocity, Vector3.up);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation,
-                                _movementData.IdleRotateSpeed*Time.fixedDeltaTime);
-            }
             
         }
 

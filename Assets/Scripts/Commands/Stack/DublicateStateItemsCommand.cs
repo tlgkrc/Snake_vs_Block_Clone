@@ -20,12 +20,11 @@ namespace Commands
             _addOnStackCommand = addOnStackCommand;
         }
 
-        public void Execute()
+        public void Execute(int value)
         {
-            int count = _collectableStack.Count;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < value; i++)
             {
-                _gameObject = GameObject.Instantiate(_collectableStack[count-1].gameObject);
+                _gameObject = GameObject.Instantiate(_collectableStack[value-1].gameObject);//use pool
                 _addOnStackCommand.Execute(_gameObject);
             }
         }

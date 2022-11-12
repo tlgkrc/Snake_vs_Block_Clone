@@ -1,9 +1,8 @@
-using Commands;
 using UnityEngine;
 using Controllers;
+using Controllers.Player;
 using Data.UnityObject;
 using Data.ValueObject;
-using Enums;
 using Keys;
 using Signals;
 
@@ -22,7 +21,7 @@ namespace Managers
         #region Serialized Variables
 
         [Space] [SerializeField] private PlayerMovementController movementController;
-        [SerializeField] private PlayerAnimationController animationController;
+        //[SerializeField] private PlayerAnimationController animationController;
         [SerializeField] private PlayerMeshController meshController;
 
         #endregion
@@ -126,7 +125,7 @@ namespace Managers
         private void OnSetIdleInputValues(IdleInputParams inputParams)
         {
             movementController.UpdateIdleInputValue(inputParams);
-            animationController.SetSpeedVariable(inputParams);
+           // animationController.SetSpeedVariable(inputParams);
         }
 
         private void OnChangeMovementState()
@@ -143,14 +142,12 @@ namespace Managers
 
         private void OnPlay()
         {
-            SetStackPosition();
             movementController.IsReadyToPlay(true);
         }
 
         private void OnLevelSuccessful()
         {
             movementController.IsReadyToPlay(false);
-            meshController.ShowSkinnedMesh();
         }
         
         private void OnLevelFailed()
@@ -160,25 +157,13 @@ namespace Managers
 
         private void OnSetPlayerScale(float value)
         {
-            animationController.SetPlayerScale(value);
+            //animationController.SetPlayerScale(value);
         }
         private void OnReset()
         {
             gameObject.SetActive(true);
             movementController.OnReset();
             SetStackPosition();
-        }
-
-        private void OnInteractionBuyPoint(bool isInteractionBuyPoint, Transform targetTransform)
-        {
-            if (isInteractionBuyPoint)
-            {
-                ParticuleState(true, targetTransform);
-            }
-            else
-            {
-                ParticuleState(false);
-            }
         }
 
         #endregion

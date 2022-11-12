@@ -1,19 +1,15 @@
-using System;
-using System.Collections;
-using Signals;
-using UnityEngine;
 using Managers;
-using Enums;
-using UnityEditor.VersionControl;
-using Task = System.Threading.Tasks.Task;
+using UnityEngine;
 
-namespace Controllers
+namespace Controllers.Player
 {
     public class PlayerPhysicsController : MonoBehaviour
     {
         #region Self Variables
 
         #region Serialized Variables
+
+        [SerializeField] private PlayerManager manager;
         
         #endregion
 
@@ -21,7 +17,10 @@ namespace Controllers
 
         private void OnTriggerEnter(Collider other)
         {
-            
+            if (other.CompareTag("Collectable"))
+            {
+                
+            }
         }
     }
 }

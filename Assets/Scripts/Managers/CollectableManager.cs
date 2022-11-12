@@ -19,18 +19,11 @@ namespace Managers
 
         #endregion
         #region Private Variables
-    
-        private CollectableData _data;
-        private ColorData _colorData;
+        
+        
         #endregion
         #endregion
 
-        private void Awake()
-        {
-            _data = GetCollectableData();
-        }
-
-        private CollectableData GetCollectableData() => Resources.Load<CD_Collectable>("Data/CD_Collectable").Data;
 
         #region Event Subscription
 
@@ -54,15 +47,10 @@ namespace Managers
             UnsubscribeEvents();
         }
         #endregion
-        
-        public void InteractionWithCollectable(GameObject collectableGameObject)
-        {
-            collectableMeshController.ColorControl(collectableGameObject);
-        }
 
-        public void InteractionWithObstacle(GameObject collectableGameObject)
+        public int GetIncreaseCount()
         {
-            StackSignals.Instance.onInteractionObstacle?.Invoke(collectableGameObject);
+            return 1;
         }
     }
 }

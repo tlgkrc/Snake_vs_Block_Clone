@@ -18,14 +18,10 @@ namespace Controllers.Collectable
 
         private void OnTriggerEnter(Collider other)
         {
-            
-        }
-
-        
-
-        public  void CanEnterDronePool()
-        {
-            _isFirstTime = true;
+            if (other.CompareTag("Player"))
+            {
+                StackSignals.Instance.onInteractionWithPlayer.Invoke(manager.GetIncreaseCount());
+            }
         }
     }
 }
