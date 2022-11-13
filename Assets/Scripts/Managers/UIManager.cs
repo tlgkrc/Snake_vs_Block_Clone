@@ -13,11 +13,12 @@ namespace Managers
 
         #region Serialized Variables
         [SerializeField] private List<GameObject> panels;
+        [SerializeField] private TextMeshProUGUI totalScoreText;
         #endregion
 
         #region Private Variables
         private UIPanelController _uiPanelController;
-        private bool _isReadyForIdleGame = false;
+        
         #endregion
 
         #endregion
@@ -40,10 +41,10 @@ namespace Managers
             UISignals.Instance.onOpenPanel += OnOpenPanel;
             UISignals.Instance.onClosePanel += OnClosePanel;
             UISignals.Instance.onSetLevelText += OnSetLevelText;
-            UISignals.Instance.onSetScoreText += OnSetScoreText;
             LevelSignals.Instance.onLevelFailed += OnLevelFailed;
             LevelSignals.Instance.onLevelSuccessful += OnLevelSuccessful;
-            StackSignals.Instance.onLastCollectableAddedToPlayer += OnLastCollectableAddedToPlayer;
+            UISignals.Instance.onUpdateTotalScoreText += OnUpdateTotalScoreText;
+
         }
 
         private void UnsubscribeEvents()
@@ -52,10 +53,9 @@ namespace Managers
             UISignals.Instance.onOpenPanel -= OnOpenPanel;
             UISignals.Instance.onClosePanel -= OnClosePanel;
             UISignals.Instance.onSetLevelText -= OnSetLevelText;
-            UISignals.Instance.onSetScoreText -= OnSetScoreText;
             LevelSignals.Instance.onLevelFailed -= OnLevelFailed;
             LevelSignals.Instance.onLevelSuccessful -= OnLevelSuccessful;
-            StackSignals.Instance.onLastCollectableAddedToPlayer -= OnLastCollectableAddedToPlayer;
+            UISignals.Instance.onUpdateTotalScoreText -= OnUpdateTotalScoreText;
 
         }
 
@@ -77,12 +77,7 @@ namespace Managers
         {
             _uiPanelController.ClosePanel(panelParam , panels);
         }
-        
-        private void OnSetScoreText(int value)
-        {
-           
-        }
-        
+
         private void OnPlay()
         {
             UISignals.Instance.onClosePanel?.Invoke(UIPanels.StartPanel);
@@ -103,16 +98,11 @@ namespace Managers
 
         private void OnSetLevelText(int value)
         {
-        }
-        private void OnLastCollectableAddedToPlayer(bool isReady)
-        {
-            _isReadyForIdleGame = isReady;
+            
         }
 
         #endregion
-
-        #region Buttons
-
+        
         public void Play()
         {
             CoreGameSignals.Instance.onPlay?.Invoke();
@@ -124,9 +114,10 @@ namespace Managers
             UISignals.Instance.onClosePanel?.Invoke(UIPanels.FailPanel);
             UISignals.Instance.onOpenPanel?.Invoke(UIPanels.StartPanel);
         }
-        
-        
-        
-        #endregion
+
+        private void OnUpdateTotalScoreText(int value)
+        {
+            totalScoreText.text = value.ToString();
+        }
     }
 }

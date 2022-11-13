@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using Enums;
-using Managers;
 using UnityEngine;
 
-namespace Commands
+namespace Commands.Player
 {
     public class SetColorState
     {
@@ -17,13 +15,5 @@ namespace Commands
         {
             _stackList = stackList;
         }
-
-        // public void Execute(ColorEnum gateColorState)
-        // {
-        //     foreach (var t in _stackList)
-        //     {
-        //         t.GetComponent<CollectableManager>().ColorState = gateColorState;
-        //     }
-        // }
     }
 }

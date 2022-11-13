@@ -20,7 +20,7 @@ namespace Managers
         [SerializeField] private CollectablePhysicController physicController;
         [SerializeField] private CollectableMeshController collectableMeshController;
         [SerializeField] private TextMeshPro scoreText;
-        [SerializeField] private int score;
+        [SerializeField] private ushort score;
 
         #endregion
         #region Private Variables

@@ -1,10 +1,9 @@
 ﻿using Enums;
-using UnityEngine;
 using Managers;
 using Signals;
+using UnityEngine;
 
-
-namespace Commands
+namespace Commands.Stack
 {
     public class InitialzeStackCommand
     {
@@ -28,7 +27,7 @@ namespace Commands
                     PoolSignals.Instance.onGetPoolObject?.Invoke(PoolTypes.Collected.ToString(), _manager.transform);
                 _manager.ItemAddOnStack.Execute(_collectable);
             }
-            ScoreSignals.Instance.onSetScore?.Invoke(count);
+            ScoreSignals.Instance.onUpdateStackScore?.Invoke(count);
         }
     }
 }

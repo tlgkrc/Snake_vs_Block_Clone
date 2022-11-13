@@ -1,7 +1,4 @@
-﻿using System;
-using Commands;
-using Enums;
-using Signals;
+﻿using Signals;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -20,20 +17,13 @@ namespace Managers
 
         #region Private Variables
 
+        private int _totalScore;
         private int _score;
-        [ShowInInspector] private GameObject _playerGO;
-        private bool _isActive;
-        private int _savedScore;
-
-        #endregion
-
-        #endregion
-
-        private void Awake()
-        {
-            
-        }
+        private GameObject _playerGameObject;
         
+        #endregion
+
+        #endregion
         
         #region Event Subscriptions
 
@@ -44,17 +34,18 @@ namespace Managers
 
         private void SubscribeEvents()
         {
-            ScoreSignals.Instance.onSetScore += OnUpdateScore;
+            ScoreSignals.Instance.onUpdateTotalScore += OnUpdateTotalScore;
+            ScoreSignals.Instance.onUpdateStackScore += OnUpdateStackScore;
             CoreGameSignals.Instance.onPlay += OnPlay;
             LevelSignals.Instance.onRestartLevel += OnReset;
         }
 
         private void UnsubscribeEvents()
         {
-            ScoreSignals.Instance.onSetScore -= OnUpdateScore;
+            ScoreSignals.Instance.onUpdateTotalScore -= OnUpdateTotalScore;
+            ScoreSignals.Instance.onUpdateStackScore -= OnUpdateStackScore;
             CoreGameSignals.Instance.onPlay -= OnPlay;
             LevelSignals.Instance.onRestartLevel -= OnReset;
-
         }
 
         private void OnDisable()
@@ -66,13 +57,13 @@ namespace Managers
 
         private void Start()
         {
-            var newScore = StackSignals.Instance.onGetCurrentScore?.Invoke();
-            OnUpdateScore((int)newScore);
+            int newScore = (int)StackSignals.Instance.onGetCurrentScore?.Invoke();
+            OnUpdateStackScore(newScore);
         }
 
         private void Update()
         {
-            if (_playerGO!=null)
+            if (_playerGameObject!=null)
             {
                 SetScoreManagerPosition();
             }
@@ -87,12 +78,17 @@ namespace Managers
         
         private void OnReset()
         {
-            _isActive = false;
         }
 
-        private void OnUpdateScore(int score)
+        private void OnUpdateStackScore(int score)
         {
-            stackScoreTMP.text = _score.ToString();
+            stackScoreTMP.text = score.ToString();
+        }
+        
+        private void OnUpdateTotalScore(int value)
+        {
+            _totalScore += value;
+            UISignals.Instance.onUpdateTotalScoreText?.Invoke(_totalScore);
         }
 
         #endregion
@@ -101,13 +97,12 @@ namespace Managers
 
         private void FindPlayerGameObject()
         {
-            _playerGO = GameObject.FindGameObjectWithTag("Player");
-            _isActive = true;
+            _playerGameObject = GameObject.FindGameObjectWithTag("Player");
         }
         
         private void SetScoreManagerPosition()
         {
-            transform.position = _playerGO.transform.position + new Vector3(0, 0, 1.2f);
+            transform.position = _playerGameObject.transform.position + new Vector3(0, 0, 1.2f);
         }
         
         #endregion

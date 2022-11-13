@@ -4,6 +4,7 @@ using Controllers;
 using Controllers.Player;
 using Data.UnityObject;
 using Data.ValueObject;
+using DG.Tweening;
 using Keys;
 using Signals;
 
@@ -22,15 +23,14 @@ namespace Managers
         #region Serialized Variables
 
         [Space] [SerializeField] private PlayerMovementController movementController;
-        //[SerializeField] private PlayerAnimationController animationController;
         [SerializeField] private PlayerMeshController meshController;
 
         #endregion
 
         #region Private Variables
+        
         private Rigidbody _rb;
         private PlayerParticuleController _particuleController;
-
 
         #endregion
         #endregion
@@ -39,7 +39,6 @@ namespace Managers
         {
             GetReferences();
             Init();
-            
             SendPlayerDataToControllers();
         }
 
@@ -78,7 +77,7 @@ namespace Managers
             CoreGameSignals.Instance.onReset += OnReset;
             LevelSignals.Instance.onLevelSuccessful += OnLevelSuccessful;
             LevelSignals.Instance.onLevelFailed += OnLevelFailed;
-            StackSignals.Instance.onSetPlayerScale += OnSetPlayerScale;
+            StackSignals.Instance.onInteractionWithObstacle += OnInteractionWithObstacle;
         }
 
         private void UnsubscribeEvents()
@@ -90,7 +89,7 @@ namespace Managers
             CoreGameSignals.Instance.onReset -= OnReset;
             LevelSignals.Instance.onLevelSuccessful -= OnLevelSuccessful;
             LevelSignals.Instance.onLevelFailed -= OnLevelFailed;
-            StackSignals.Instance.onSetPlayerScale -= OnSetPlayerScale;
+            StackSignals.Instance.onInteractionWithObstacle -= OnInteractionWithObstacle;
         }
 
         private void OnDisable()
@@ -142,6 +141,7 @@ namespace Managers
         private void OnLevelFailed()
         {
             movementController.IsReadyToPlay(false);
+            gameObject.SetActive(false);
         }
 
         private void OnSetPlayerScale(float value)
@@ -176,6 +176,11 @@ namespace Managers
             {
                 _particuleController.StopParticule();
             }
+        }
+
+        private void OnInteractionWithObstacle()
+        {
+            transform.DOMoveZ(transform.position.z - .5f, 0.2f);
         }
 
         #endregion

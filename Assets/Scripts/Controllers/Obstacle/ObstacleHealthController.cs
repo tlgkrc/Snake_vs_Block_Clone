@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Managers;
+using Signals;
 using TMPro;
 using UnityEngine;
 
@@ -43,8 +44,10 @@ namespace Controllers.Obstacle
                 if (_health>0)
                 {
                     _health--;
+                    ScoreSignals.Instance.onUpdateTotalScore?.Invoke(1);
                     SetHealthText();
-                    yield return new WaitForSeconds(1f);
+                    StackSignals.Instance.onInteractionWithObstacle?.Invoke();
+                    yield return new WaitForSeconds(.1f);
                 }
                 else
                 {

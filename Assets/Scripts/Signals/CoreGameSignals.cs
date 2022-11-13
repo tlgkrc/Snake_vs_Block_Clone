@@ -9,6 +9,5 @@ namespace Signals
     {
         public UnityAction onPlay = delegate { };
         public UnityAction onReset = delegate { };
-        public UnityAction onChangeGameState = delegate {  };//daha sonra onlevelsuccessfull a baglanacak
     }
 }

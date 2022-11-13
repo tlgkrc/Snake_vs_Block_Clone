@@ -12,7 +12,6 @@ namespace Signals
         public UnityAction onLevelSuccessful = delegate { };
         public UnityAction onNextLevel = delegate { };
         public UnityAction onRestartLevel = delegate { };
-        
-        public UnityAction onNextIdleLevel = delegate { };
+        public UnityAction<Vector3> onNextLevelInitialize =delegate {  };
     }
 }

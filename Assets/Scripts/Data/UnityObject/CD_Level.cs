@@ -7,6 +7,6 @@ namespace Data.UnityObject
     [CreateAssetMenu(fileName = "CD_Level", menuName = "Game/CD_Level", order = 0)]
     public class CD_Level : ScriptableObject
     {
-        public List<int> Levels = new List<int>();
+        public List<ushort> Levels = new List<ushort>();
     }
 }

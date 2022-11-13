@@ -17,5 +17,5 @@ MonoBehaviour:
       ForwardSpeed: 5
       SidewaysSpeed: 2
       RunSpeed: 5
-      ClampRotation: {x: -60, y: 60}
-      Damping: 0.04
+      ClampRotation: {x: -30, y: 30}
+      Damping: 0.1

@@ -22,7 +22,7 @@ namespace Controllers.Collectable
         {
             CollectableManager cm = otherGameObject.transform.parent.gameObject.GetComponent<CollectableManager>();
             otherGameObject.transform.parent.gameObject.SetActive(false);
-            StackSignals.Instance.onInteractionObstacle?.Invoke(manager.gameObject);
+            //StackSignals.Instance.onInteractionObstacle?.Invoke(manager.gameObject);
         }
     }
 }

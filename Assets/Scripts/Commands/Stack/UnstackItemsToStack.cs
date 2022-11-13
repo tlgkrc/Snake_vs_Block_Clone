@@ -31,7 +31,7 @@ namespace Commands
             }
             
             _unStackList.Clear();
-            ScoreSignals.Instance.onSetScore?.Invoke(_collectableStack.Count);
+            ScoreSignals.Instance.onUpdateStackScore?.Invoke(_collectableStack.Count);
             ScoreSignals.Instance.onSetLeadPosition?.Invoke(_collectableStack[0]);
 
        

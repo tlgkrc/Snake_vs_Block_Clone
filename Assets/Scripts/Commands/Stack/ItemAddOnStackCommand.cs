@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Data.ValueObject;
-using Enums;
 using Signals;
 using UnityEngine;
 
@@ -38,12 +37,12 @@ namespace Commands.Stack
             else
             {
                 newGameObject.transform.SetParent(_transform);
-                Vector3 newPos = _collectableStack[_collectableStack.Count - 1].transform.localPosition;
+                Vector3 newPos = _collectableStack[^1].transform.localPosition;
                 newPos.z -= _stackData.CollectableOffsetInStack;
                 newGameObject.transform.localPosition = newPos;
                 _collectableStack.Add(newGameObject);
             }
-            ScoreSignals.Instance.onSetScore?.Invoke(_collectableStack.Count);
+            ScoreSignals.Instance.onUpdateStackScore?.Invoke(_collectableStack.Count);
         }
     }
 }

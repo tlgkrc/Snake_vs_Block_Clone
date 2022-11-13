@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Managers;
+using Enums;
 using Signals;
 using UnityEngine;
 
-namespace Commands
+namespace Commands.Stack
 {
     public class ItemRemoveOnStackCommand
     {
@@ -19,19 +19,16 @@ namespace Commands
             _collectableStack = CollectableStack;
             _levelHolder = levelHolder;
         }
-        public void Execute(GameObject collectableGameObject)
+        public void Execute()
         {
-            int index = _collectableStack.IndexOf(collectableGameObject);
-            collectableGameObject.transform.SetParent(_levelHolder.transform.GetChild(0));
-            collectableGameObject.SetActive(false);
-            _collectableStack.RemoveAt(index);
+            PoolSignals.Instance.onReleasePoolObject?.Invoke(PoolTypes.Collected.ToString(), _collectableStack[^1].gameObject);
+            _collectableStack.RemoveAt(_collectableStack.Count-1);
             _collectableStack.TrimExcess();
-            
-            if (index==0)
+            ScoreSignals.Instance.onUpdateStackScore?.Invoke(_collectableStack.Count);
+            if (_collectableStack.Count<=0)
             {
-                ScoreSignals.Instance.onSetLeadPosition?.Invoke(_collectableStack[0]);
+                LevelSignals.Instance.onLevelFailed?.Invoke();
             }
-            ScoreSignals.Instance.onSetScore?.Invoke(_collectableStack.Count);
         }
     }
 }

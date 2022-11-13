@@ -83,12 +83,11 @@ namespace Controllers.Player
                 _clampValues.y), (position = rigidbody.position).y, position.z);
             rigidbody.position = position;
 
-            transform.Rotate(0,_inputValue/2,0,Space.Self);
-            var transformEulerAngles = transform.eulerAngles;
+            Transform transform1;
+            (transform1 = transform).Rotate(0,_inputValue/4,0,Space.Self);
+            var transformEulerAngles = transform1.eulerAngles;
             transformEulerAngles.y = Mathf.Clamp(transformEulerAngles.y, 
                 _movementData.ClampRotation.x,_movementData.ClampRotation.y);
-
-
         }
 
         private void StopSideways()
@@ -103,21 +102,6 @@ namespace Controllers.Player
         {
             rigidbody.velocity = Vector3.zero;
             rigidbody.angularVelocity = Vector3.zero;
-        }
-        private void OnlySideways()
-        {
-            var velocity = rigidbody.velocity;
-            velocity = new Vector3(_inputValue * _movementData.SidewaysSpeed, velocity.y,
-                0);
-            rigidbody.velocity = velocity;
-
-            Vector3 position;
-            position = new Vector3(
-                Mathf.Clamp(rigidbody.position.x, _clampValues.x,
-                    _clampValues.y),
-                (position = rigidbody.position).y,
-                position.z);
-            rigidbody.position = position;
         }
 
         public void OnReset()
