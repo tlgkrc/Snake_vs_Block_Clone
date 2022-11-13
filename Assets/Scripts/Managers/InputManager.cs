@@ -86,7 +86,7 @@ namespace Managers
         {
             if (!isReadyForTouch) return;
             
-            if (Input.GetMouseButtonUp(0) && _queryPointerOverUIElementCommand.Execute())
+            if (Input.GetMouseButtonUp(0) && !_queryPointerOverUIElementCommand.Execute())
             {
                 MouseButtonUp();
             }

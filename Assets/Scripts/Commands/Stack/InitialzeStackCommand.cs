@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Enums;
+using UnityEngine;
 using Managers;
 using Signals;
 
@@ -23,15 +24,11 @@ namespace Commands
         {
             for (int i = 0; i < count/*_manager.StackData.InitialStackItem*/; i++)
             {
-                GameObject obj = Object.Instantiate(_collectable);
-                _manager.ItemAddOnStack.Execute(obj);
-                if (i == 0)
-                {
-                    ScoreSignals.Instance.onSetLeadPosition?.Invoke(obj);
-                }
+                _collectable =
+                    PoolSignals.Instance.onGetPoolObject?.Invoke(PoolTypes.Collected.ToString(), _manager.transform);
+                _manager.ItemAddOnStack.Execute(_collectable);
             }
             ScoreSignals.Instance.onSetScore?.Invoke(count);
-            // _manager.StackValueUpdateCommand.Execute();
         }
     }
 }

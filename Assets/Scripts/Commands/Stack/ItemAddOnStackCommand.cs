@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using Data.ValueObject;
+using Enums;
 using Signals;
+using UnityEngine;
 
-namespace Commands
+namespace Commands.Stack
 {
     public class ItemAddOnStackCommand
     {
@@ -22,21 +23,25 @@ namespace Commands
             _stackData = stackData;
         }
         
-        public void Execute(GameObject _collectableGameObject)
+        public void Execute(GameObject newGameObject)
         {
+            if (newGameObject==null)
+            {
+                return;
+            }
             if (_collectableStack.Count == 0)
             {
-                _collectableStack.Add(_collectableGameObject);
-                _collectableGameObject.transform.SetParent(_transform);
-                _collectableGameObject.transform.localPosition = Vector3.zero;
+                _collectableStack.Add(newGameObject);
+                newGameObject.transform.SetParent(_transform);
+                newGameObject.transform.localPosition = Vector3.zero;
             }
             else
             {
-                _collectableGameObject.transform.SetParent(_transform);
+                newGameObject.transform.SetParent(_transform);
                 Vector3 newPos = _collectableStack[_collectableStack.Count - 1].transform.localPosition;
                 newPos.z -= _stackData.CollectableOffsetInStack;
-                _collectableGameObject.transform.localPosition = newPos;
-                _collectableStack.Add(_collectableGameObject);
+                newGameObject.transform.localPosition = newPos;
+                _collectableStack.Add(newGameObject);
             }
             ScoreSignals.Instance.onSetScore?.Invoke(_collectableStack.Count);
         }

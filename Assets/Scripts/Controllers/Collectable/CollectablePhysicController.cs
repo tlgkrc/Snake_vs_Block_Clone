@@ -11,16 +11,14 @@ namespace Controllers.Collectable
         #region Serializefield Variables
         [SerializeField] private CollectableManager manager;
         #endregion
-        #region Private Variables
-        private bool _isFirstTime = true;
-        #endregion
+
         #endregion
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Player"))
             {
-                StackSignals.Instance.onInteractionWithPlayer.Invoke(manager.GetIncreaseCount());
+                manager.InteractionWithPlayer();
             }
         }
     }

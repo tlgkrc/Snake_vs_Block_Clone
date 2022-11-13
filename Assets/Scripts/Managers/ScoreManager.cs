@@ -1,4 +1,5 @@
-﻿using Commands;
+﻿using System;
+using Commands;
 using Enums;
 using Signals;
 using Sirenix.OdinInspector;
@@ -13,17 +14,15 @@ namespace Managers
 
         #region Serialized Variables
 
-        [SerializeField] private GameObject stackGO;
-        [SerializeField] private TextMeshPro scoreTMP, spriteTMP;
-        [SerializeField] private GameObject textPlane;
+        [SerializeField] private TextMeshPro stackScoreTMP;
 
         #endregion
 
         #region Private Variables
 
-        private int _score, _idleScore,_idleOldScore;
+        private int _score;
         [ShowInInspector] private GameObject _playerGO;
-        private bool _isActive = false;
+        private bool _isActive;
         private int _savedScore;
 
         #endregion
@@ -32,12 +31,9 @@ namespace Managers
 
         private void Awake()
         {
-            Init();
+            
         }
         
-        private void Init()
-        {
-        }
         
         #region Event Subscriptions
 
@@ -48,20 +44,16 @@ namespace Managers
 
         private void SubscribeEvents()
         {
-            CoreGameSignals.Instance.onChangeGameState += OnChangeGameState;
             ScoreSignals.Instance.onSetScore += OnUpdateScore;
             CoreGameSignals.Instance.onPlay += OnPlay;
             LevelSignals.Instance.onRestartLevel += OnReset;
-            ScoreSignals.Instance.onGetIdleScore += OnGetCurrentScore;
         }
 
         private void UnsubscribeEvents()
         {
-            CoreGameSignals.Instance.onChangeGameState -= OnChangeGameState;
             ScoreSignals.Instance.onSetScore -= OnUpdateScore;
             CoreGameSignals.Instance.onPlay -= OnPlay;
             LevelSignals.Instance.onRestartLevel -= OnReset;
-            ScoreSignals.Instance.onGetIdleScore -= OnGetCurrentScore;
 
         }
 
@@ -71,12 +63,19 @@ namespace Managers
         }
 
         #endregion
-        
+
+        private void Start()
+        {
+            var newScore = StackSignals.Instance.onGetCurrentScore?.Invoke();
+            OnUpdateScore((int)newScore);
+        }
 
         private void Update()
         {
-            SetScoreManagerRotation();
-           
+            if (_playerGO!=null)
+            {
+                SetScoreManagerPosition();
+            }
         }
         
         #region Event Methods
@@ -85,15 +84,7 @@ namespace Managers
         {
             FindPlayerGameObject();
         }
-
-        private void OnChangeGameState()
-        {
-            var transform1 = transform;
-            transform1.parent = _playerGO.transform;
-            transform1.localPosition = new Vector3(0, 2f, 0);
-            ScoreSignals.Instance.onSetScore?.Invoke(_savedScore);
-        }
-
+        
         private void OnReset()
         {
             _isActive = false;
@@ -101,27 +92,22 @@ namespace Managers
 
         private void OnUpdateScore(int score)
         {
-            
-        }
-
-        private int OnGetCurrentScore()
-        {
-            return _idleScore;
+            stackScoreTMP.text = _score.ToString();
         }
 
         #endregion
         
         #region Methods
 
-        private void SetScoreManagerRotation()
-        {
-            transform.rotation = Quaternion.Euler(0, 0, transform.rotation.z * -1f);
-        }
-
         private void FindPlayerGameObject()
         {
             _playerGO = GameObject.FindGameObjectWithTag("Player");
             _isActive = true;
+        }
+        
+        private void SetScoreManagerPosition()
+        {
+            transform.position = _playerGO.transform.position + new Vector3(0, 0, 1.2f);
         }
         
         #endregion

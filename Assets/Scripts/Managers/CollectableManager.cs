@@ -1,8 +1,10 @@
+using System;
 using Controllers;
 using Controllers.Collectable;
 using Data.UnityObject;
 using Data.ValueObject;
 using Signals;
+using TMPro;
 using UnityEngine;
 
 namespace Managers
@@ -14,8 +16,11 @@ namespace Managers
 
         #endregion
         #region SerializeField Variables
+        
         [SerializeField] private CollectablePhysicController physicController;
         [SerializeField] private CollectableMeshController collectableMeshController;
+        [SerializeField] private TextMeshPro scoreText;
+        [SerializeField] private int score;
 
         #endregion
         #region Private Variables
@@ -24,33 +29,15 @@ namespace Managers
         #endregion
         #endregion
 
-
-        #region Event Subscription
-
-        private void OnEnable()
+        private void Awake()
         {
-            SubscribeEvents();
+            scoreText.text = score.ToString();
         }
-
-        private void SubscribeEvents()
-        {
-
-        }
-
-        private void UnsubscribeEvents()
-        {
         
-        }
-    
-        private void OnDisable()
+        public void InteractionWithPlayer()
         {
-            UnsubscribeEvents();
-        }
-        #endregion
-
-        public int GetIncreaseCount()
-        {
-            return 1;
+            StackSignals.Instance.onInteractionWithPlayer.Invoke(score);
+            gameObject.SetActive(false);
         }
     }
 }

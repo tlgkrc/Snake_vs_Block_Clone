@@ -14,34 +14,25 @@ namespace Controllers
         #endregion
         #endregion
 
-        public void InisializedController(StackData Stackdata)
+        public void InisializedController(StackData stackdata)
         {
-            _stackData = Stackdata;
+            _stackData = stackdata;
         }
 
-        public void StackItemsMoveOrigin(Vector3 direction,List<GameObject> _collectableStack, bool _isOnDronePool = false)
+        public void StackItemsMoveOrigin(Vector3 direction,List<GameObject> collectableStack)
         {
-            if (_collectableStack.Count <= 0)
+            if (collectableStack.Count <= 0)
             {
                 return;
             }
             
-            float directx = Mathf.Lerp(_collectableStack[0].transform.localPosition.x, direction.x,_stackData.LerpSpeed_x);
-            float directy = Mathf.Lerp(_collectableStack[0].transform.localPosition.y, direction.y,_stackData.LerpSpeed_y);
-            float directz = Mathf.Lerp(_collectableStack[0].transform.localPosition.z, direction.z + _stackData.DistanceFormPlayer ,_stackData.LerpSpeed_z);
+            float directx = Mathf.Lerp(collectableStack[0].transform.localPosition.x, direction.x,_stackData.LerpSpeed_x);
+            float directy = Mathf.Lerp(collectableStack[0].transform.localPosition.y, direction.y,_stackData.LerpSpeed_y);
+            float directz = Mathf.Lerp(collectableStack[0].transform.localPosition.z, direction.z + _stackData.DistanceFormPlayer ,_stackData.LerpSpeed_z);
             
-            if (_isOnDronePool == true)
-            {
-                _collectableStack[0].transform.localPosition = new Vector3(directx, 
-                    _collectableStack[0].transform.position.y, _collectableStack[0].transform.position.z);
-                StackItemsLerpMoveOnDronePool(_collectableStack);
-            }
-            else
-            {
-                _collectableStack[0].transform.localPosition = new Vector3(directx, directy, directz);
-                _collectableStack[0].transform.LookAt(direction);
-                StackItemsLerpMove(_collectableStack);
-            }
+            collectableStack[0].transform.localPosition = new Vector3(directx, directy, directz);
+            collectableStack[0].transform.LookAt(direction);
+            StackItemsLerpMove(collectableStack);
         }
 
         public void StackItemsLerpMove(List<GameObject> _collectableStack)

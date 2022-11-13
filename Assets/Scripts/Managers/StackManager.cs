@@ -5,7 +5,9 @@ using Signals;
 using Data.UnityObject;
 using Data.ValueObject;
 using Commands;
+using Commands.Stack;
 using DG.Tweening;
+using Enums;
 
 namespace Managers
 {
@@ -14,7 +16,7 @@ namespace Managers
         #region Self Variables
         
         #region Public Variables
-        public List<GameObject> CollectableStack = new List<GameObject>();
+        public List<GameObject> CollectedStackList = new List<GameObject>();
         public List<GameObject> UnstackList = new List<GameObject>();
         public ItemAddOnStackCommand ItemAddOnStack;
 
@@ -31,13 +33,10 @@ namespace Managers
         private StackMoveController _stackMoveController;
         private ItemRemoveOnStackCommand _itemRemoveOnStackCommand;
         private StackShackAnimCommand _stackShackAnimCommand;
-        private DublicateStateItemsCommand _dublicateStateItemsCommand;
         private GameObject _playerGameObject;
-        private Transform _poolTriggerTransform;
-
-        private bool _isPlayerOnDronePool = false;
         private Vector3 _direction;
-
+        //
+        private ItemAddOnStackCommand _itemAddOnStackCommand;
         #endregion
         #endregion
         
@@ -53,10 +52,10 @@ namespace Managers
         {
             _stackMoveController = new StackMoveController();
             _stackMoveController.InisializedController(_stackData);
-            ItemAddOnStack = new ItemAddOnStackCommand(ref CollectableStack, transform, _stackData);
-            _itemRemoveOnStackCommand = new ItemRemoveOnStackCommand(ref CollectableStack, ref levelHolder);
-            _stackShackAnimCommand = new StackShackAnimCommand(ref CollectableStack, _stackData);
-            _dublicateStateItemsCommand = new DublicateStateItemsCommand(ref CollectableStack, ref ItemAddOnStack);
+            _itemRemoveOnStackCommand = new ItemRemoveOnStackCommand(ref CollectedStackList, ref levelHolder);
+            _stackShackAnimCommand = new StackShackAnimCommand(ref CollectedStackList, _stackData);
+            _itemAddOnStackCommand = new ItemAddOnStackCommand(ref CollectedStackList,transform,_stackData);
+            
         }
 
         #region Event Subscription
@@ -68,7 +67,6 @@ namespace Managers
         private void SubscribeEvent()
         {
             CoreGameSignals.Instance.onReset += OnReset;
-            StackSignals.Instance.onInteractionCollectable += OnInteractionWithCollectable;
             StackSignals.Instance.onInteractionObstacle += _itemRemoveOnStackCommand.Execute;
             StackSignals.Instance.onPlayerGameObject += OnSetPlayer;
             StackSignals.Instance.onGetCurrentScore += OnGetStackCount;
@@ -79,7 +77,6 @@ namespace Managers
         private void UnSubscribeEvent()
         {
             CoreGameSignals.Instance.onReset -= OnReset;
-            StackSignals.Instance.onInteractionCollectable -= OnInteractionWithCollectable;
             StackSignals.Instance.onInteractionObstacle -= _itemRemoveOnStackCommand.Execute;
             StackSignals.Instance.onPlayerGameObject -= OnSetPlayer;
             StackSignals.Instance.onGetCurrentScore -= OnGetStackCount;
@@ -95,13 +92,12 @@ namespace Managers
 
         private void Start()
         {
-            ScoreSignals.Instance.onSetScore?.Invoke(CollectableStack.Count);
+            ScoreSignals.Instance.onSetScore?.Invoke(CollectedStackList.Count);
         }
         
         private void Update()
         {
-            if (_isPlayerOnDronePool)StackMove(true);
-            else StackMove();
+           StackMove();
         }
 
         private void OnSetPlayer(GameObject player)
@@ -109,61 +105,33 @@ namespace Managers
             _playerGameObject = player;
         }
         
-        private void StackMove(bool isOnDronePool=false)
+        private void StackMove()
         {
              if (gameObject.transform.childCount > 0)
              {
-                _stackMoveController.StackItemsMoveOrigin(_playerGameObject.transform.position, CollectableStack,isOnDronePool);
+                _stackMoveController.StackItemsMoveOrigin(_playerGameObject.transform.position, CollectedStackList);
              }
         }
-        
-        private void OnInteractionWithCollectable(GameObject collectableGameObject)
-        {
-            ItemAddOnStack.Execute(collectableGameObject);
-            collectableGameObject.tag = "Collected";
-            StartCoroutine(_stackShackAnimCommand.Execute());
-        }
 
-        private void OnPlayerCollideWithDronePool(Transform poolTriggerTransform)
-        {
-            _poolTriggerTransform = poolTriggerTransform;
-            _isPlayerOnDronePool = true;
-            CollectableStack[0].transform.DOMoveZ(CollectableStack[0].transform.position.z + 5, 1f);
-        }
-        
         private void OnReset()
         {
             foreach (Transform childs in transform)
             {
                 Destroy(childs.gameObject);
             }
-            CollectableStack.Clear();
-        }
-
-        private void OnStackToUnstack(GameObject collectable)//command olabilir
-        {
-            UnstackList.Add(collectable);
-            collectable.transform.SetParent(levelHolder.transform);
-            CollectableStack.Remove(collectable);
-            CollectableStack.TrimExcess();
-            StackMoveToPool();
-        }
-
-        private void StackMoveToPool()
-        {
-            if (CollectableStack.Count > 0) OnPlayerCollideWithDronePool(_poolTriggerTransform);
+            CollectedStackList.Clear();
         }
 
         private int OnGetStackCount()
         {
-            return CollectableStack.Count;
+            return CollectedStackList.Count;
         }
 
         private void OnLevelSuccessful()
         {
-            var lastCollectable = CollectableStack[CollectableStack.Count - 1];
+            var lastCollectable = CollectedStackList[CollectedStackList.Count - 1];
             var itemDuration = 1;
-            foreach (var item in CollectableStack)
+            foreach (var item in CollectedStackList)
             {
                 item.transform.SetParent(levelHolder.transform);
                 item.transform.DOMove(_playerGameObject.transform.position, .1f*itemDuration).OnComplete(()=>
@@ -180,13 +148,18 @@ namespace Managers
                 itemDuration += 1;
                 
             }
-            CollectableStack.Clear();
-            CollectableStack.TrimExcess();
+            CollectedStackList.Clear();
+            CollectedStackList.TrimExcess();
         }
 
         private void OnInteractionWithPlayer(int value)
         {
-            
+            for (int i = 0; i < value; i++)
+            {
+                var gO = PoolSignals.Instance.onGetPoolObject?.Invoke(PoolTypes.Collected.ToString(), transform);
+                _itemAddOnStackCommand.Execute(gO);
+            }
+            ScoreSignals.Instance.onUpdateScore?.Invoke(CollectedStackList.Count);
         }
     }
 }

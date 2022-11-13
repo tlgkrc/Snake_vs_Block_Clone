@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Controllers;
 using Controllers.Player;
@@ -38,7 +39,7 @@ namespace Managers
         {
             GetReferences();
             Init();
-            SetStackPosition();
+            
             SendPlayerDataToControllers();
         }
 
@@ -73,10 +74,8 @@ namespace Managers
             InputSignals.Instance.onInputTaken += OnActivateMovement;
             InputSignals.Instance.onInputReleased += OnDeactiveMovement;
             InputSignals.Instance.onRunnerInputDragged += OnSetRunnerInputValues;
-            InputSignals.Instance.onJoystickDragged += OnSetIdleInputValues;
             CoreGameSignals.Instance.onPlay += OnPlay;
             CoreGameSignals.Instance.onReset += OnReset;
-            CoreGameSignals.Instance.onChangeGameState += OnChangeMovementState;
             LevelSignals.Instance.onLevelSuccessful += OnLevelSuccessful;
             LevelSignals.Instance.onLevelFailed += OnLevelFailed;
             StackSignals.Instance.onSetPlayerScale += OnSetPlayerScale;
@@ -87,10 +86,8 @@ namespace Managers
             InputSignals.Instance.onInputTaken -= OnActivateMovement;
             InputSignals.Instance.onInputReleased -= OnDeactiveMovement;
             InputSignals.Instance.onRunnerInputDragged -= OnSetRunnerInputValues;
-            InputSignals.Instance.onJoystickDragged -= OnSetIdleInputValues;
             CoreGameSignals.Instance.onPlay -= OnPlay;
             CoreGameSignals.Instance.onReset -= OnReset;
-            CoreGameSignals.Instance.onChangeGameState -= OnChangeMovementState;
             LevelSignals.Instance.onLevelSuccessful -= OnLevelSuccessful;
             LevelSignals.Instance.onLevelFailed -= OnLevelFailed;
             StackSignals.Instance.onSetPlayerScale -= OnSetPlayerScale;
@@ -102,6 +99,11 @@ namespace Managers
         }
 
         #endregion
+
+        private void Start()
+        {
+            SetStackPosition();
+        }
 
         #region Event Methods
 
@@ -122,19 +124,6 @@ namespace Managers
             movementController.UpdateRunnerInputValue(inputParams);
         }
         
-        private void OnSetIdleInputValues(IdleInputParams inputParams)
-        {
-            movementController.UpdateIdleInputValue(inputParams);
-           // animationController.SetSpeedVariable(inputParams);
-        }
-
-        private void OnChangeMovementState()
-        {
-            movementController.IsReadyToPlay(true);
-            movementController.ChangeMovementState();
-            movementController.EnableMovement();
-            _rb.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-        }
         
         #endregion
 

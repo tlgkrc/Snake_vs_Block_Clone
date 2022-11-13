@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Data.ValueObject
 {
@@ -13,7 +14,8 @@ namespace Data.ValueObject
     {
         public float ForwardSpeed;
         public float SidewaysSpeed;
-        public float RotateBorder;
         public float RunSpeed;
+        public Vector2 ClampRotation;
+        public float Damping;
     }
 }

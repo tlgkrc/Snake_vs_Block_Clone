@@ -17,10 +17,7 @@ namespace Controllers.Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Collectable"))
-            {
-                
-            }
+           
         }
     }
 }

@@ -1,17 +1,15 @@
 using Data.ValueObject;
-using DG.Tweening;
 using Keys;
 using UnityEngine;
 
-namespace Controllers
+namespace Controllers.Player
 {
     public class PlayerMovementController : MonoBehaviour
     {
         #region Self Variables
         
         #region Serialized Variables
-
-        //[SerializeField] private PlayerManager manager;
+        
         [SerializeField] private new Rigidbody rigidbody;
         
         #endregion
@@ -19,12 +17,9 @@ namespace Controllers
         #region Private Variables
         
         private PlayerMovementData _movementData;
-        private bool _isReadyToMove, _isReadyToPlay, _isOnDronePool = false;
+        private bool _isReadyToMove, _isReadyToPlay;
         private float _inputValue;
-        private float _inputValueX;
-        private float _inputValueZ;
         private Vector2 _clampValues;
-        private bool _isRunner = true;
         
         #endregion
         
@@ -45,31 +40,11 @@ namespace Controllers
         {
             _isReadyToMove = false;
         }
-        public void DeactiveForwardMovement(Transform poolTriggerTransform)
-        {
-            _isOnDronePool = true;
-        }
-
-        public void UnDeactiveForwardMovement()
-        {
-            _isOnDronePool = false;
-        }
 
         public void UpdateRunnerInputValue(RunnerInputParams inputParam)
         {
             _inputValue = inputParam.XValue;
             _clampValues = inputParam.ClampValues;
-        }
-
-        public void UpdateIdleInputValue(IdleInputParams inputParams)
-        {
-            _inputValueX = inputParams.ValueX;
-            _inputValueZ = inputParams.ValueZ;
-        }
-
-        public void ChangeMovementState()
-        {
-            _isRunner = false;
         }
 
         public void IsReadyToPlay(bool state)
@@ -80,61 +55,48 @@ namespace Controllers
         private void FixedUpdate()
         {
             if (_isReadyToPlay)
-            {
-                if (_isOnDronePool)
-                {
-                    OnlySideways();
-                }
-                else if (_isReadyToMove)
+            { 
+                if (_isReadyToMove)
                 {
                     Move();
                 }
                 else
                 {
-                    StopPlayer();
+                    StopSideways();
                 }
             }
             else
+            { 
                 Stop();
+            }
         }
 
         private void Move()
-        {
-            if (_isRunner)
-            {
-                RunnerMove();
-            }
-        }
-
-        private void StopPlayer()
-        {
-            if (_isRunner)
-            {
-                StopSideways();
-            }
-            else
-            {
-                Stop();
-            }
-        }
-
-        private void RunnerMove()
         {
             var velocity = rigidbody.velocity;
             velocity = new Vector3(_inputValue * _movementData.SidewaysSpeed, velocity.y,
                 _movementData.ForwardSpeed);
             rigidbody.velocity = velocity;
-
+            
             Vector3 position;
             position = new Vector3(Mathf.Clamp(rigidbody.position.x, _clampValues.x,
-                    _clampValues.y), (position = rigidbody.position).y, position.z);
+                _clampValues.y), (position = rigidbody.position).y, position.z);
             rigidbody.position = position;
-            
+
+            transform.Rotate(0,_inputValue/2,0,Space.Self);
+            var transformEulerAngles = transform.eulerAngles;
+            transformEulerAngles.y = Mathf.Clamp(transformEulerAngles.y, 
+                _movementData.ClampRotation.x,_movementData.ClampRotation.y);
+
+
         }
 
         private void StopSideways()
         {
             rigidbody.velocity = new Vector3(0, rigidbody.velocity.y, _movementData.ForwardSpeed);
+            var to = Quaternion.Euler(Vector3.zero);
+            transform.rotation = Quaternion.Lerp(transform.rotation, to,  _movementData.Damping);
+            rigidbody.angularVelocity = Vector3.zero;
         }
 
         private void Stop()

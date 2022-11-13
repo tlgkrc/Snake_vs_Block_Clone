@@ -1,13 +1,9 @@
-﻿using System;
-using Data.UnityObject;
-using Data.ValueObject;
-using Enums;
+﻿using Data.ValueObject;
+using Managers;
 using Signals;
 using UnityEngine;
-using DG.Tweening;
-using Managers;
 
-namespace Controllers
+namespace Controllers.Collectable
 
 {
     public class CollectableMeshController: MonoBehaviour
