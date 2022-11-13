@@ -16,17 +16,17 @@ namespace Controllers.Obstacle
 
         #endregion
 
-        private void OnCollisionEnter(Collision collision)
+        private void OnTriggerEnter(Collider other)
         {
-            if (collision.collider.CompareTag("Player"))
+            if (other.CompareTag("Player"))
             {
                 manager.DecreaseHealth();
             }
         }
 
-        private void OnCollisionExit(Collision other)
+        private void OnTriggerExit(Collider other)
         {
-            if (other.collider.CompareTag("Player"))
+            if (other.CompareTag("Player"))
             {
                 manager.StopDecreasingHealth();
             }
