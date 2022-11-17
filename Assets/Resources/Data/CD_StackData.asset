@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: CD_StackData
   m_EditorClassIdentifier: 
   StackData:
-    CollectableOffsetInStack: 0.5
+    CollectableOffsetInStack: 0.25
     LerpSpeed_x: 0.5
     LerpSpeed_y: 0.5
     LerpSpeed_z: 0.25
     ShackAnimDuraction: 0.12
     ShackScaleValue: 1
     InitialStackItem: 5
-    DistanceFormPlayer: -0.5
+    DistanceFormPlayer: -0.25

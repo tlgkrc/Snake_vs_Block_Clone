@@ -141,7 +141,7 @@ namespace Controllers
                     var gO = PoolSignals.Instance.onGetPoolObject?.Invoke(PoolTypes.Collectable.ToString(), transform);
                     gO.transform.position = new Vector3(-_scaleOfObstacle * ((_levelData.LineCount-1) / 2) +
                                                         Random.Range(0,_levelData.LineCount+1)*_scaleOfObstacle, 0, _posCounter * _scaleOfObstacle);
-                    var score = Random.Range(1, _levelData.maxObstacleScore);
+                    var score = Random.Range(1, _levelData.maxObstacleScore/2);
                     LevelSignals.Instance.onSetCollectableScore?.Invoke(score, gO);
                     _collectableList.Add(gO);
                     _preRowHasObstacle = false;
