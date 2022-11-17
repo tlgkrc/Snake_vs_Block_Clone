@@ -1,5 +1,6 @@
 ﻿using Cinemachine;
 using Enums;
+using Signals;
 using UnityEngine;
 
 namespace Managers
@@ -11,6 +12,7 @@ namespace Managers
         #region Serialized Variables
 
         [SerializeField] private CinemachineVirtualCamera levelCamera;
+        [SerializeField] private Camera cam;
 
         #endregion
         
@@ -46,12 +48,12 @@ namespace Managers
 
         private void SubscribeEvents()
         {
-            
+            LevelSignals.Instance.onLevelFailed += OnLevelFailed;
         }
 
         private void UnsubscribeEvents()
         {
-            
+            LevelSignals.Instance.onLevelFailed -= OnLevelFailed;
         }
 
         private void OnDisable()
@@ -86,6 +88,11 @@ namespace Managers
             _cameraState = CameraStates.LevelCam;
             levelCamera.Follow = null; 
             levelCamera.LookAt = null;
+        }
+
+        private void OnLevelFailed()
+        {
+            cam.backgroundColor = Color.white;
         }
     }
 }

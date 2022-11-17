@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Controllers;
 using Controllers.Player;
@@ -14,12 +13,6 @@ namespace Managers
     {
         #region Self Variables
 
-        #region Public Variables
-
-        [Header("Data")] public PlayerData Data;
-
-        #endregion
-
         #region Serialized Variables
 
         [Space] [SerializeField] private PlayerMovementController movementController;
@@ -29,6 +22,7 @@ namespace Managers
 
         #region Private Variables
         
+        private PlayerData _data;
         private Rigidbody _rb;
         private PlayerParticuleController _particuleController;
 
@@ -53,12 +47,12 @@ namespace Managers
 
         private void GetReferences()
         {
-            Data = GetPlayerData();
+            _data = GetPlayerData();
         }
 
         private void SendPlayerDataToControllers()
         {
-            movementController.SetMovementData(Data.MovementData);
+            movementController.SetMovementData(_data.MovementData);
         }
 
         #region Event Subscription
@@ -78,6 +72,7 @@ namespace Managers
             LevelSignals.Instance.onLevelSuccessful += OnLevelSuccessful;
             LevelSignals.Instance.onLevelFailed += OnLevelFailed;
             StackSignals.Instance.onInteractionWithObstacle += OnInteractionWithObstacle;
+            LevelSignals.Instance.onGetPlayerPos += OnGetPlayerPos;
         }
 
         private void UnsubscribeEvents()
@@ -90,6 +85,7 @@ namespace Managers
             LevelSignals.Instance.onLevelSuccessful -= OnLevelSuccessful;
             LevelSignals.Instance.onLevelFailed -= OnLevelFailed;
             StackSignals.Instance.onInteractionWithObstacle -= OnInteractionWithObstacle;
+            LevelSignals.Instance.onGetPlayerPos -= OnGetPlayerPos;
         }
 
         private void OnDisable()
@@ -143,11 +139,7 @@ namespace Managers
             movementController.IsReadyToPlay(false);
             gameObject.SetActive(false);
         }
-
-        private void OnSetPlayerScale(float value)
-        {
-            //animationController.SetPlayerScale(value);
-        }
+        
         private void OnReset()
         {
             gameObject.SetActive(true);
@@ -180,7 +172,12 @@ namespace Managers
 
         private void OnInteractionWithObstacle()
         {
-            transform.DOMoveZ(transform.position.z - .5f, 0.2f);
+            transform.DOMoveZ(transform.position.z - .5f, 0.1f);
+        }
+
+        private Vector3 OnGetPlayerPos()
+        {
+            return transform.position;
         }
 
         #endregion

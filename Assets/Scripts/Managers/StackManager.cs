@@ -128,7 +128,6 @@ namespace Managers
                 _itemAddOnStackCommand.Execute(gO);
             }
             ScoreSignals.Instance.onUpdateStackScore?.Invoke(CollectedStackList.Count);
-            Debug.Log(CollectedStackList.Count);
         }
     }
 }

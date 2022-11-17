@@ -1,8 +1,10 @@
+using System;
+using Controllers;
 using Data.UnityObject;
+using Data.ValueObject;
 using Signals;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Commands.Level;
 
 namespace Managers
 {
@@ -19,38 +21,25 @@ namespace Managers
         #region Serialized Variables
 
         [SerializeField] private GameObject levelHolder;
+        [SerializeField] private LevelGenerateController generateController;
 
         #endregion
 
         #region Private Variables
 
-        private LevelLoaderCommand _levelLoader;
-        private ClearActiveLevelCommand _levelClearer;
-        [ShowInInspector] private int _levelID;
-
+        private LevelData _levelData;
+        private float _playerPosZ;
+        
         #endregion
 
         #endregion
 
         private void Awake()
         {
-            _levelID = GetActiveLevel();
-            _levelClearer = new ClearActiveLevelCommand();
-            _levelLoader = new LevelLoaderCommand();
+            _levelData = GetLevelData();
+            SetDataToControllers();
         }
-
-        private int GetActiveLevel()
-        {
-            if (!ES3.FileExists()) return 0;
-            return ES3.KeyExists("Level") ? ES3.Load<ushort>("Level") : 0;
-        }
-
-        private int GetLevelCount()
-        {
-            return (_levelID % Resources.Load<CD_Level>("Data/CD_Level").Levels.Count);
-           
-        }
-
+        
         #region Event Subscription
 
         private void OnEnable()
@@ -60,21 +49,14 @@ namespace Managers
 
         private void SubscribeEvents()
         {
-            LevelSignals.Instance.onLevelInitialize += OnInitializeLevel;
-            LevelSignals.Instance.onClearActiveLevel += OnClearActiveLevel;
-            LevelSignals.Instance.onNextLevel += OnNextLevel;
-            LevelSignals.Instance.onRestartLevel += OnRestartLevel;
-            LevelSignals.Instance.onNextLevelInitialize += OnNextLevelInitialize;
+            CoreGameSignals.Instance.onPlay += OnPlay;
+            ScoreSignals.Instance.onSetLeadPosition += OnSetPlayerPos;
         }
 
         private void UnsubscribeEvents()
         {
-            LevelSignals.Instance.onLevelInitialize -= OnInitializeLevel;
-            LevelSignals.Instance.onClearActiveLevel -= OnClearActiveLevel;
-            LevelSignals.Instance.onNextLevel -= OnNextLevel;
-            LevelSignals.Instance.onRestartLevel -= OnRestartLevel;
-            LevelSignals.Instance.onNextLevelInitialize -= OnNextLevelInitialize;
-
+            CoreGameSignals.Instance.onPlay -= OnPlay;
+            ScoreSignals.Instance.onSetLeadPosition -= OnSetPlayerPos;
         }
 
         private void OnDisable()
@@ -84,55 +66,30 @@ namespace Managers
 
         #endregion
 
-        private void Start()
+        private void Update()
         {
-            OnInitializeLevel();
-            SetLevelText();
+            generateController.UpdateLevel((float)LevelSignals.Instance.onGetPlayerPos?.Invoke().z);
         }
 
-        private void OnNextLevel()
+        private LevelData GetLevelData()
         {
-            _levelID++;
-            LevelSignals.Instance.onClearActiveLevel?.Invoke();
-            CoreGameSignals.Instance.onReset?.Invoke();
-            LevelSignals.Instance.onLevelInitialize?.Invoke();
-            SetLevelText();
+            return Resources.Load<CD_Level>("Data/CD_Level").LevelData;
         }
 
-        private void OnRestartLevel()
+        private void OnSetPlayerPos(GameObject player)
         {
-            LevelSignals.Instance.onClearActiveLevel?.Invoke();
-            CoreGameSignals.Instance.onReset?.Invoke();
-            LevelSignals.Instance.onLevelInitialize?.Invoke();
-        }
-        private int OnGetLevelID()
-        {
-            return _levelID;
+            _playerPosZ = player.transform.position.z;
+            generateController.UpdateLevel(_playerPosZ);
         }
 
-        private void SetLevelText()
+        private void SetDataToControllers()
         {
-            UISignals.Instance.onSetLevelText?.Invoke(_levelID);
-        }
-        private void OnInitializeLevel()
-        {
-            int newLevelData = GetLevelCount();
-            _levelLoader.InitializeLevel(newLevelData, levelHolder.transform);
-        }
-        private void OnClearActiveLevel()
-        {
-            _levelClearer.ClearActiveLevel(levelHolder.transform);
+            generateController.SetData(_levelData);
         }
 
-        private void OnNextLevelInitialize(Vector3 pos)
+        private void OnPlay()
         {
-            _levelID++;
-            _levelLoader.InitializeLevel(_levelID, levelHolder.transform);
-            levelHolder.transform.GetChild(1).transform.position = pos;
-            if (levelHolder.transform.childCount >= 2)
-            {
-                _levelClearer.ClearActiveLevel(levelHolder.transform.GetChild(0));
-            }
+            generateController.InitializeLevel();
         }
     }
 }

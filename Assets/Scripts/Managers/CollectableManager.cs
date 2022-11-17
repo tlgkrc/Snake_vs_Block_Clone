@@ -1,8 +1,5 @@
 using System;
-using Controllers;
 using Controllers.Collectable;
-using Data.UnityObject;
-using Data.ValueObject;
 using Signals;
 using TMPro;
 using UnityEngine;
@@ -20,24 +17,50 @@ namespace Managers
         [SerializeField] private CollectablePhysicController physicController;
         [SerializeField] private CollectableMeshController collectableMeshController;
         [SerializeField] private TextMeshPro scoreText;
-        [SerializeField] private ushort score;
 
         #endregion
         #region Private Variables
-        
+
+        private ushort _score;
         
         #endregion
         #endregion
 
-        private void Awake()
+        #region Self Variables
+
+        private void OnEnable()
         {
-            scoreText.text = score.ToString();
+            SubscribeEvents();
         }
-        
+
+        private void SubscribeEvents()
+        {
+            LevelSignals.Instance.onSetCollectableScore += OnSetCollectableScore;
+        }
+
+        private void UnsubscribeEvents()
+        {
+            LevelSignals.Instance.onSetCollectableScore -= OnSetCollectableScore;
+        }
+
+        private void OnDisable()
+        {
+            UnsubscribeEvents();
+        }
+
+        #endregion
+
         public void InteractionWithPlayer()
         {
-            StackSignals.Instance.onInteractionWithPlayer.Invoke(score);
+            StackSignals.Instance.onInteractionWithPlayer.Invoke(_score);
             gameObject.SetActive(false);
+        }
+
+        private void OnSetCollectableScore(int value,GameObject newGO)
+        {
+            if (gameObject != newGO) return;
+            _score = (ushort)value;
+            scoreText.text = value.ToString();
         }
     }
 }

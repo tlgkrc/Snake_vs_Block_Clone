@@ -102,7 +102,7 @@ namespace Managers
         
         private void SetScoreManagerPosition()
         {
-            transform.position = _playerGameObject.transform.position + new Vector3(0, 0, 1.2f);
+            transform.position = _playerGameObject.transform.position + new Vector3(0, 0, .8f);
         }
         
         #endregion

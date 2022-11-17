@@ -2,6 +2,9 @@
 {
     public enum PoolTypes
     {
-        Collected
+        Collected,
+        Obstacle,
+        Wall,
+        Collectable
     }
 }

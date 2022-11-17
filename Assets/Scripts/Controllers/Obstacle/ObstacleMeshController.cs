@@ -1,5 +1,4 @@
-﻿using System;
-using Data.ValueObject;
+﻿using Data.ValueObject;
 using Managers;
 using UnityEngine;
 
@@ -12,7 +11,7 @@ namespace Controllers.Obstacle
         #region Serialized Variables
 
         [SerializeField] private ObstacleManager manager;
-        [SerializeField] private Renderer renderer;
+        [SerializeField] private new Renderer renderer;
 
         #endregion
 

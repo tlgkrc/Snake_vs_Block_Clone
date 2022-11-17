@@ -1,8 +1,7 @@
-﻿using System;
-using Controllers.Obstacle;
+﻿using Controllers.Obstacle;
 using Data.UnityObject;
 using Data.ValueObject;
-using TMPro;
+using Signals;
 using UnityEngine;
 
 namespace Managers
@@ -16,13 +15,13 @@ namespace Managers
         [SerializeField] private ObstacleHealthController healthController;
         [SerializeField] private ObstaclePhysicController physicController;
         [SerializeField] private ObstacleMeshController meshController;
-        [SerializeField] private ushort health;
         
         #endregion
 
         #region Private Variables
 
         private ColorData _colorData;
+        private ushort _health;
 
         #endregion
 
@@ -32,6 +31,35 @@ namespace Managers
         private void Awake()
         {
             _colorData = GetColorData();
+        }
+
+        #region Event Supscriptions
+
+        private void OnEnable()
+        {
+            SubscribeEvents();
+        }
+
+        private void SubscribeEvents()
+        {
+            LevelSignals.Instance.onSetObstacleScore += OnSetObstacleScore;
+        }
+
+        private void UnsubscribeEvents()
+        {
+            LevelSignals.Instance.onSetObstacleScore -= OnSetObstacleScore;
+
+        }
+
+        private void OnDisable()
+        {
+            UnsubscribeEvents();
+        }
+
+        #endregion
+
+        private void Start()
+        {
             SendDataToControllers();
         }
 
@@ -42,8 +70,8 @@ namespace Managers
 
         private void SendDataToControllers()
         {
-            healthController.SetHealthData(health);
-            meshController.SetHealthData(_colorData,health);
+            healthController.SetHealthData(_health);
+            meshController.SetHealthData(_colorData,_health);
         }
 
         public void DecreaseHealth()
@@ -62,6 +90,14 @@ namespace Managers
         {
             StopAllCoroutines();
             gameObject.SetActive(false);
+        }
+
+        private void OnSetObstacleScore(int health,GameObject newGO)
+        {
+            if (gameObject == newGO)
+            {
+                _health = (ushort)health;
+            }
         }
     }
 }
